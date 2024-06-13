@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                git branch: 'main',
+                    credentialsId: '61c0f573-47fa-48a7-bc9d-b042a982013f',
+                    url: 'https://github.com/Sindhu-M29/jenkins-1.git'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: '7483a6c8-ab31-42ac-9aa9-1b5ccffc2c60', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh '''
+                    sshpass -p $PASS scp -o StrictHostKeyChecking=no index.html $USER@20.244.107.249:/var/www/html/website
+                    '''
+                }
+            }
+        }
+    }
+}
